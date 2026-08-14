@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'checkIsLogged' => \App\Http\Middleware\CheckIsLogged::class,
+            'checkIsNotLogged' => \App\Http\Middleware\CheckIsNotLogged::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
