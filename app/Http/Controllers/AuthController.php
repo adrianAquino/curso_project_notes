@@ -17,7 +17,7 @@ class AuthController extends Controller
         $request->validate(
             //rules    
         [
-            'text_username' => 'required | email | ',
+            'text_username' => 'required | email',
             'text_password' => 'required | min:6 | max:16'
         ],
             //custom messages
@@ -35,6 +35,39 @@ class AuthController extends Controller
         $username = $request->input('text_username');
         $password = $request->input('text_password');
         
+        //check if user exists in the database
+        $user = User::where('username', $username)->where('deleted_at', null)->first();
+
+        
+
+        if (!$user) {
+            return redirect()->back()
+                    ->withInput()
+                    ->with('loginError', 'Usuário ou senha não encontrados');
+        }
+
+        //check if password is correct
+        if(!password_verify($password, $user->password)){
+            return redirect()->back()
+                    ->withInput()
+                    ->with('loginError', 'Usuário ou senha não encontrados');
+        }
+
+        //update last login date
+        $user->last_login = date('Y-m-d H:i:s');
+        $user->save();
+
+        //login user
+        session([
+            'user' =>[
+                'id' => $user->id,
+                 'username' => $user->username
+            ]
+        ]);
+
+
+        echo 'Login successful';
+        //print_r($user);
         //test databe connection
         /*try {
             DB::connection()->getPdo();
@@ -45,15 +78,12 @@ class AuthController extends Controller
 
         //get all users from the database
         //$users = User::all()->toArray();
-        
-        $userModel = new User();
-        $users = $userModel->all()->toArray();
 
-        echo "<pre>";
-        print_r($users);
     }
 
     public function logout(){
-        echo "Logout";
+        //logout user
+        session()->forget('user');
+        return redirect()->to('/login');
     }
 }
