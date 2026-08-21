@@ -66,7 +66,8 @@ class AuthController extends Controller
         ]);
 
 
-        echo 'Login successful';
+        return redirect()->to('/');
+
         //print_r($user);
         //test databe connection
         /*try {
