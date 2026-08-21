@@ -8,4 +8,8 @@ class User extends Model
 {
     //
     
+
+    public function notes(){
+        return $this->hasMany(Note::class);
+    }
 }
