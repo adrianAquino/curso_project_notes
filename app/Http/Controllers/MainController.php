@@ -14,7 +14,7 @@ class MainController extends Controller
     $notes = User::find($id)->notes()->get()->toArray();
 
     //show home view
-    return view('home');
+    return view('home', ['notes'=> $notes]);
   }
 
   public function newNote(){
